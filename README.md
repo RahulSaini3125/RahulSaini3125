@@ -1,6 +1,5 @@
 # 👋 **Hi, I’m Rahul Saini (@RahulSaini3125)**
 
-Testing Branch
 
 I'm a passionate developer specializing in **Python** web development and **AI/ML**. Currently, I'm working with **Django** and **FastAPI** for web development, alongside exploring advanced AI techniques. I focus on building robust, scalable applications and enjoy collaborating with other tech enthusiasts to solve real-world challenges.
 
