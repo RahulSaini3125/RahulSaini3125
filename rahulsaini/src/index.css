@@ -1,0 +1,385 @@
+@import "tailwindcss";
+
+/* Custom CSS Variables for Deep Space Theme */
+:root {
+  --space-dark: #020617;
+  --space-medium: #0f172a;
+  --nebula-purple: #4c1d95;
+  --nebula-teal: #134e4a;
+  --glow-purple: rgba(76, 29, 149, 0.3);
+  --glow-teal: rgba(19, 78, 74, 0.3);
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+/* Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(180deg, var(--space-dark) 0%, var(--space-medium) 50%, var(--space-dark) 100%);
+  background-attachment: fixed;
+  color: #e2e8f0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Layout Container Centering */
+.container-center {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Flex Center Utility */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Text Center Utility */
+.text-center {
+  text-align: center;
+}
+
+/* Full Width Section */
+.section-full {
+  width: 100%;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Max Width Container */
+.max-w-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Twinkling Stars Animation */
+.stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle var(--duration) ease-in-out infinite;
+  opacity: 0;
+}
+
+@keyframes twinkle {
+
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  50% {
+    opacity: var(--max-opacity, 1);
+    transform: scale(1);
+  }
+}
+
+/* Nebula Glow Effects */
+.nebula-glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.nebula-purple {
+  background: var(--nebula-purple);
+  width: 500px;
+  height: 500px;
+  top: 10%;
+  left: -10%;
+  opacity: 0.4;
+  animation: float-nebula 20s ease-in-out infinite;
+}
+
+.nebula-teal {
+  background: var(--nebula-teal);
+  width: 400px;
+  height: 400px;
+  bottom: 20%;
+  right: -5%;
+  opacity: 0.3;
+  animation: float-nebula 25s ease-in-out infinite reverse;
+}
+
+.nebula-purple-2 {
+  background: var(--nebula-purple);
+  width: 300px;
+  height: 300px;
+  top: 60%;
+  left: 60%;
+  opacity: 0.25;
+  animation: float-nebula 18s ease-in-out infinite;
+  animation-delay: -5s;
+}
+
+@keyframes float-nebula {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate(30px, -20px) scale(1.1);
+  }
+
+  50% {
+    transform: translate(-20px, 30px) scale(0.95);
+  }
+
+  75% {
+    transform: translate(20px, 20px) scale(1.05);
+  }
+}
+
+/* Glassmorphism Card */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Mission Duration Badge Glow */
+.mission-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, rgba(76, 29, 149, 0.3) 0%, rgba(19, 78, 74, 0.3) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  border-radius: 50px;
+  font-weight: 600;
+  animation: badge-pulse 3s ease-in-out infinite;
+}
+
+.mission-badge::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 52px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #14b8a6 100%);
+  z-index: -1;
+  opacity: 0.5;
+  filter: blur(8px);
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes glow-pulse {
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Marquee Styles */
+.marquee-container {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--duration, 30s) linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Planet Icon Styling */
+.planet-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(20, 184, 166, 0.2) 100%);
+  border: 2px solid rgba(139, 92, 246, 0.5);
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+}
+
+.planet-icon::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #8b5cf6, #14b8a6, #8b5cf6);
+  opacity: 0.3;
+  animation: rotate-ring 10s linear infinite;
+  z-index: -1;
+}
+
+@keyframes rotate-ring {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Satellite Badge */
+.satellite-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.satellite-badge:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(139, 92, 246, 0.5);
+  transform: scale(1.05);
+}
+
+.satellite-badge svg,
+.satellite-badge img {
+  width: 20px;
+  height: 20px;
+}
+
+/* Section Styling */
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #f8fafc 0%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+.section-subtitle {
+  color: #64748b;
+  font-size: 1.1rem;
+  margin-bottom: 48px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+
+  .nebula-purple,
+  .nebula-teal,
+  .nebula-purple-2 {
+    width: 200px;
+    height: 200px;
+    filter: blur(60px);
+  }
+
+  .planet-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--space-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8b5cf6 0%, #14b8a6 100%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #a78bfa 0%, #2dd4bf 100%);
+}
