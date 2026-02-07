@@ -5,5 +5,13 @@ services:
       dockerfile: Dockerfile
     container_name: rahulsaini-portfolio
     ports:
-      - "80:80"
+      - "80"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
     restart: unless-stopped
