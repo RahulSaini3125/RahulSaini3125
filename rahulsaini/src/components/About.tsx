@@ -83,19 +83,10 @@ export default function About() {
                 </div>
 
                 {/* Main Content Grid */}
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'minmax(280px, 1fr) minmax(400px, 2fr)',
-                    gap: '3rem',
-                    alignItems: 'start'
-                }}>
+                <div className="about-grid">
 
                     {/* Left: Profile Card */}
-                    <div className="glass-card" style={{
-                        padding: '2rem',
-                        position: 'sticky',
-                        top: '2rem'
-                    }}>
+                    <div className="glass-card profile-card">
                         {/* Avatar */}
                         <div style={{
                             width: '100%',
@@ -238,48 +229,29 @@ export default function About() {
                     </div>
 
                     {/* Right: Timeline */}
-                    <div style={{ position: 'relative' }}>
+                    <div className="timeline-container">
                         {/* Timeline Track */}
-                        <div style={{
-                            position: 'absolute',
-                            left: '1.5rem',
-                            top: '2rem',
-                            bottom: '2rem',
-                            width: '2px',
-                            background: 'linear-gradient(to bottom, #7c3aed, #2dd4bf)',
-                            opacity: 0.5
-                        }} />
+                        <div className="timeline-track" />
 
                         {/* Timeline Items */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div className="timeline-items">
                             {timeline.map((item, idx) => (
                                 <div
                                     key={idx}
-                                    className="glass-card"
+                                    className="glass-card timeline-item"
                                     style={{
-                                        marginLeft: '3.5rem',
-                                        padding: '1.25rem 1.5rem',
-                                        position: 'relative',
-                                        transition: 'all 0.3s ease',
                                         borderLeft: `3px solid ${item.color}`
                                     }}
                                 >
                                     {/* Node Circle */}
-                                    <div style={{
-                                        position: 'absolute',
-                                        left: '-3.85rem',
-                                        top: '1.25rem',
-                                        width: '2.5rem',
-                                        height: '2.5rem',
-                                        borderRadius: '50%',
-                                        background: '#0f172a',
-                                        border: `2px solid ${item.color}`,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        color: item.color,
-                                        boxShadow: `0 0 20px ${item.glowColor}`
-                                    }}>
+                                    <div 
+                                        className="timeline-node"
+                                        style={{
+                                            border: `2px solid ${item.color}`,
+                                            color: item.color,
+                                            boxShadow: `0 0 20px ${item.glowColor}`
+                                        }}
+                                    >
                                         {item.icon}
                                     </div>
 

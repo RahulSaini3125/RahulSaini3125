@@ -344,8 +344,96 @@ body {
   margin-bottom: 48px;
 }
 
+/* About Section Grid */
+.about-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(400px, 2fr);
+  gap: 3rem;
+  align-items: start;
+}
+
+.profile-card {
+  padding: 2rem;
+  position: sticky;
+  top: 2rem;
+}
+
+/* Timeline Styles */
+.timeline-container {
+  position: relative;
+}
+
+.timeline-track {
+  position: absolute;
+  left: 1.5rem;
+  top: 2rem;
+  bottom: 2rem;
+  width: 2px;
+  background: linear-gradient(to bottom, #7c3aed, #2dd4bf);
+  opacity: 0.5;
+}
+
+.timeline-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.timeline-item {
+  margin-left: 3.5rem;
+  padding: 1.25rem 1.5rem;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.timeline-node {
+  position: absolute;
+  left: -3.85rem;
+  top: 1.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
+
+  /* About Section - Stack vertically on mobile */
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .profile-card {
+    position: relative;
+    top: 0;
+    padding: 1.5rem;
+  }
+
+  /* Timeline adjustments for mobile */
+  .timeline-track {
+    left: 1rem;
+  }
+
+  .timeline-item {
+    margin-left: 2.5rem;
+    padding: 1rem 1.25rem;
+  }
+
+  .timeline-node {
+    left: -2.85rem;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .timeline-node svg {
+    width: 14px;
+    height: 14px;
+  }
 
   .nebula-purple,
   .nebula-teal,
