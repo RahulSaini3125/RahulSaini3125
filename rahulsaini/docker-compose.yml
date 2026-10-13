@@ -3,20 +3,46 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: rahulsaini-portfolio:latest
     container_name: rahulsaini-portfolio
-    ports:
-      - "80"
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 256M
-        reservations:
-          cpus: '0.25'
-          memory: 128M
     restart: unless-stopped
+
+    # Only reachable by Nginx Proxy Manager over the shared network — no port opened on the host.
+    # In NPM, forward to:  rahulsaini-portfolio : 80
+    expose:
+      - "80"
     networks:
       - nginx-proxy-manager
+
+    # Sized for a 512 MB server: nginx serving static files uses ~5–15 MB
+    mem_limit: 64m
+    memswap_limit: 64m
+    mem_reservation: 16m
+    cpus: 0.5
+    pids_limit: 64
+
+    # Hardening: read-only filesystem, writable temp dirs in RAM (counted in mem_limit)
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx:size=8m
+      - /var/run:size=1m
+      - /tmp:size=1m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+      - NET_BIND_SERVICE
+
+    # Cap log size so access logs can't fill the disk
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
 
 networks:
   nginx-proxy-manager:
