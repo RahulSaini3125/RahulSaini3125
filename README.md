@@ -1,5 +1,5 @@
 <a href="https://www.officialrahulsaini.in/">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:5eead4,55:a78bfa,100:f9a8d4&height=190&section=header&text=Rahul%20Saini&fontSize=52&fontColor=070a10&fontAlignY=36&desc=Full%20Stack%20AI%20Engineer&descSize=18&descAlignY=58&animation=fadeIn" width="100%" alt="Rahul Saini — Full Stack AI Engineer" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:5eead4,55:a78bfa,100:f9a8d4&height=190&section=header&text=Rahul%20Saini&fontSize=52&fontColor=070a10&fontAlignY=36&desc=Web%20Developer&descSize=18&descAlignY=58&animation=fadeIn" width="100%" alt="Rahul Saini — Web Developer" />
 </a>
 
 <div align="center">
@@ -34,7 +34,7 @@ My focus is bringing **AI into real products**: LLM-powered assistants, RAG over
 
 | 💼 Current role | ⏳ Experience | 🚀 Projects | 🎓 Education | 📍 Based in |
 |:---:|:---:|:---:|:---:|:---:|
-| Web Developer @ Snakescript LLP | Since Mar 2024 | 15+ delivered | BCA · Chandigarh University | Mohali, Punjab, India |
+| Web Developer @ Snakescript LLP | Since Mar 2024 | 15+ delivered | MCA · Chandigarh University | Mohali, Punjab, India |
 
 ## 🧭 Experience
 
@@ -45,6 +45,7 @@ My focus is bringing **AI into real products**: LLM-powered assistants, RAG over
   - Scalable AWS data pipelines (Lambda, ECS, Step Functions) over multiple biomedical databases
   - Workflow automation — email data extraction, XML API integrations, automated notifications
   - Deployments on AWS & Azure with Docker, Nginx and CI/CD
+- **Master of Computer Applications (MCA)** — Chandigarh University · *2024 → 2026*
 - **Bachelor of Computer Applications (BCA)** — Chandigarh University · *2021 → 2024*
 
 ## 🧪 Selected work

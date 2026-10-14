@@ -11,11 +11,13 @@ window.PROFILE = {
   name: 'Rahul Saini',
   initials: 'RS',
   handle: 'rahul.saini',
-  role: 'Full Stack AI Engineer',
+  role: 'Web Developer',
   location: 'Mohali, Punjab, India · On-site / Hybrid',
   timezone: 'Asia/Kolkata',   // shows your live local time in the footer; empty hides it
   photo: '',            // e.g. 'assets/img/photo.jpg' — leave empty to show initials
-  resume: '',           // e.g. 'assets/Rahul-Saini-CV.pdf' — leave empty to hide the button
+  resume: 'auto',       // 'auto' = build an ATS-friendly PDF from this file on click (assets/js/resume.js),
+                        // a path like 'assets/Rahul-Saini-CV.pdf' = download that file, '' = hide the button
+  phone: '',            // optional, shown only in the downloadable resume, e.g. '+91 98765 43210'
 
   available: false,     // true shows the 'Available' badges, the Services section and hire-me CTAs
                         // (also update the 'available' answer in faq below)
@@ -31,7 +33,7 @@ window.PROFILE = {
   orbit: ['Python', 'FastAPI', 'React', 'LangChain', 'AWS', 'Docker'],
 
   intro:
-    'Full Stack AI Engineer building production-ready web apps and AI-powered products — from React frontends and Python APIs to LLM agents, RAG pipelines and cloud deployments on AWS & Azure.',
+    'Web Developer building production-ready web apps and AI-powered products — from React frontends and Python APIs to LLM agents, RAG pipelines and cloud deployments on AWS & Azure.',
 
   // Experience counter in the hero is calculated live from this date (YYYY-MM).
   careerStart: '2024-03',
@@ -62,7 +64,7 @@ window.PROFILE = {
   facts: [
     { icon: '💼', label: 'Current role', value: 'Web Developer @ Snakescript LLP' },
     { icon: '⏳', label: 'Experience', value: 'auto' },
-    { icon: '🎓', label: 'Education', value: 'BCA · Chandigarh University' },
+    { icon: '🎓', label: 'Education', value: 'MCA · Chandigarh University' },
     { icon: '📍', label: 'Location', value: 'Mohali, Punjab, India' },
     { icon: '🏢', label: 'Work mode', value: 'On-site / Hybrid' },
   ],
@@ -91,6 +93,13 @@ window.PROFILE = {
         'Deploy and run services on AWS & Azure with Docker, Nginx and CI/CD pipelines.',
       ],
       tags: ['Python', 'FastAPI', 'Django', 'React', 'Next.js', 'LangChain', 'AWS', 'Azure'],
+    },
+    {
+      type: 'education',
+      title: 'Master of Computer Applications (MCA)',
+      org: 'Chandigarh University',
+      start: '2024',
+      end: '2026',
     },
     {
       type: 'education',
@@ -272,7 +281,7 @@ window.PROFILE = {
   faq: [
     {
       q: 'Who is Rahul Saini?',
-      a: 'Rahul Saini is a Full Stack AI Engineer based in Mohali, Punjab, India. Rahul works at Snakescript LLP, building production web apps, LLM agents and RAG systems with Python, FastAPI, Django, React and Next.js, deployed on AWS and Azure.',
+      a: 'Rahul Saini is a Web Developer based in Mohali, Punjab, India. Rahul works at Snakescript LLP, building production web apps, LLM agents and RAG systems with Python, FastAPI, Django, React and Next.js, deployed on AWS and Azure.',
     },
     {
       q: 'What does Rahul Saini specialise in?',

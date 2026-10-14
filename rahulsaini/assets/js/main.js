@@ -49,7 +49,15 @@
     $$('[data-bind]').forEach((el) => (el.textContent = P[el.dataset.bind] ?? ''));
     $$('[data-if]').forEach((el) => { if (!P[el.dataset.if]) el.remove(); });
     $$('[data-if-not]').forEach((el) => { if (P[el.dataset.ifNot]) el.remove(); });
-    $$('[data-href]').forEach((el) => el.setAttribute('href', P[el.dataset.href]));
+    $$('[data-href]').forEach((el) => {
+      if (el.dataset.href === 'resume' && P.resume === 'auto') {
+        el.setAttribute('href', '#'); // generated on click — see setupResume()
+        el.removeAttribute('download');
+        el.dataset.resume = 'auto';
+      } else {
+        el.setAttribute('href', P[el.dataset.href]);
+      }
+    });
     $$('[data-src]').forEach((el) => el.setAttribute('src', P[el.dataset.src]));
 
     if (P.name) document.title = `${P.name} — ${P.role || 'Developer'}`;
@@ -467,12 +475,27 @@
       return;
     }
 
+    // Show without animating (used for content already scrolled past)
+    const showNow = (el) => {
+      el.style.transition = 'none';
+      el.classList.add('in');
+      revealer.unobserve(el);
+      requestAnimationFrame(() => requestAnimationFrame(() => (el.style.transition = '')));
+    };
     const revealer = new IntersectionObserver((entries) => {
       entries.forEach((en) => {
         if (en.isIntersecting) { en.target.classList.add('in'); revealer.unobserve(en.target); }
+        else if (en.boundingClientRect.bottom < 0) showNow(en.target);
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     $$('.reveal').forEach((el) => revealer.observe(el));
+
+    // On reload the browser restores the scroll position after this runs. Sections above the
+    // restored position would otherwise replay their entrance animation when scrolling back up,
+    // which looks like the page refreshing.
+    const revealAbove = () => $$('.reveal:not(.in)').forEach((el) => { if (el.getBoundingClientRect().bottom < 0) showNow(el); });
+    window.addEventListener('load', () => requestAnimationFrame(revealAbove), { once: true });
+    window.addEventListener('scroll', revealAbove, { once: true, passive: true });
 
     // Highlight the nav link of the section in view
     const navLinks = $$('.nav__links a');
@@ -621,6 +644,44 @@
     toast.timer = setTimeout(() => t.classList.remove('show'), 2200);
   }
 
+  /* ---------- Resume PDF (built in the browser from data.js) ---------- */
+  // jsPDF (~130 kB gzipped), the builder and its fonts are only fetched on the first click.
+  // All are served from this site: the CSP allows scripts and fetches from 'self' only.
+  const loadScript = (src) =>
+    new Promise((ok, fail) => {
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload = ok;
+      s.onerror = () => fail(new Error(`Could not load ${src}`));
+      document.head.appendChild(s);
+    });
+
+  let resumeLibs;
+  function setupResume() {
+    $$('[data-resume="auto"]').forEach((btn) =>
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (btn.getAttribute('aria-busy') === 'true') return;
+        btn.setAttribute('aria-busy', 'true');
+        toast('Building resume PDF…');
+        try {
+          resumeLibs ||= loadScript('assets/js/vendor/jspdf.umd.min.js?v=4.2.1')
+            .then(() => loadScript('assets/js/resume.js?v=3'))
+            .then(() => window.ResumeBuilder.loadFonts('assets/fonts/'));
+          const fonts = await resumeLibs;
+          window.ResumeBuilder.build(P, fonts).save(window.ResumeBuilder.fileName(P));
+          toast('Resume downloaded ✓');
+        } catch (err) {
+          resumeLibs = null; // allow a retry
+          console.error(err);
+          toast('Could not build the resume — please try again');
+        } finally {
+          btn.removeAttribute('aria-busy');
+        }
+      })
+    );
+  }
+
   function setupCopy() {
     $('#copy-email').addEventListener('click', async () => {
       try {
@@ -656,5 +717,6 @@
   setupMagnetic();
   setupClock();
   setupCopy();
+  setupResume();
   setupComposer();
 })();

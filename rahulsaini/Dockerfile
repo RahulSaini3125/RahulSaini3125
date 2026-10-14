@@ -16,7 +16,7 @@ RUN node /tools/prerender.mjs /site /tools/nginx.conf
 FROM alpine:3.20 AS compress
 COPY --from=prerender /site /site
 WORKDIR /site
-RUN find . -type f \( -name '*.html' -o -name '*.css' -o -name '*.js' -o -name '*.svg' -o -name '*.txt' -o -name '*.xml' \) \
+RUN find . -type f \( -name '*.html' -o -name '*.css' -o -name '*.js' -o -name '*.svg' -o -name '*.txt' -o -name '*.xml' -o -name '*.ttf' \) \
       -exec sh -c 'gzip -9 -c "$1" > "$1.gz"' _ {} \;
 
 # Stage 3: serve
