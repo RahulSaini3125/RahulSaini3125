@@ -717,6 +717,7 @@ h2 em, .contact__title em {
 @media (min-width: 1040px) { .card--feature { grid-row: span 2; } }
 .card--feature h3 { font-size: clamp(1.6rem, 3vw, 2.2rem); }
 .card--feature p { font-size: 17px; max-width: 520px; }
+@media (min-width: 1040px) { .card--wide { grid-column: 1 / -1; min-height: 0; } .card--wide p { max-width: 760px; } }
 
 .card__top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
 .card__top-right { display: flex; align-items: center; gap: 8px; }

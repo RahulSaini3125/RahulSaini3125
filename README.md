@@ -57,8 +57,9 @@ My focus is bringing **AI into real products**: LLM-powered assistants, RAG over
 | 💬 | **Knowledge-Based Group Chat** | Groups with their own knowledge base, and an AI that answers using only that group's knowledge. | Django · React · LangChain · RAG · Vector DB · WebSockets |
 | 🧠 | **LLM Agent Workflows** | Multi-step agents that call tools and APIs to automate business tasks, with human-in-the-loop review. | LangGraph · LangChain · OpenAI / Claude |
 | ✈️ | **Flight Details Email Automation** | Reads booking emails, extracts flight details and sends automated updates. | Python · IMAP / SMTP · LLM parsing · Celery |
-| 🔌 | **XML API Integration** | Services that fetch, transform and process third-party XML data for multiple business apps. | Python · XML / SOAP · REST · Django |
-| 🌐 | **Full Stack Web Platform** | Production web app with authentication, role-based dashboards and an admin panel. | Next.js · React · Node.js · PostgreSQL |
+| 📞 | **AI Voice & Document Automation Platform** | Ties together Jira, AI voice-call automation and OCR document processing, with an AI chatbot over the extracted content. | Python · Jira API · Retell AI · OCR · LLMs |
+| 👥 | **Employee Management Portal** | HR portal with check-in/check-out, attendance tracking, daily status reports and salary slips, plus a companion mobile app. | Python · REST APIs · React · React Native · PostgreSQL |
+| 📡 | **ISP Management Platform** | Broadband provider platform for plans, customer service and support tickets, with real-time alerts for the support team. | Python · REST APIs · React · Real-time notifications |
 
 ## ⚛️ Toolkit
 

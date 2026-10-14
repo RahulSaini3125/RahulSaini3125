@@ -105,7 +105,8 @@ window.PROFILE = {
   // type of work and the stack used — no client names or details.
   projectsNote: 'Client work at Snakescript LLP is under NDA, so project names and client details are kept confidential. Here is the kind of work I deliver and the stack behind it.',
 
-  // First project is shown as the large featured card. 6 projects fill the grid perfectly.
+  // First project is shown as the large featured card. 6 projects fill the grid perfectly;
+  // with 7, set wide: true on the last one so it spans the full row on desktop.
   // A badge containing 'NDA' shows a lock badge.
   projects: [
     {
@@ -144,12 +145,12 @@ window.PROFILE = {
       link: '',
     },
     {
-      icon: '🔌',
-      title: 'XML API Integration',
+      icon: '📞',
+      title: 'AI Voice & Document Automation Platform',
       badge: 'NDA',
       description:
-        'Python services that integrate third-party XML APIs to fetch, transform and process data for multiple business applications.',
-      tags: ['Python', 'XML / SOAP', 'REST', 'Django'],
+        'Full stack platform that ties together Jira project management, AI voice-call automation and OCR document processing, with an AI chatbot that answers questions about the extracted content.',
+      tags: ['Python', 'Jira API', 'Retell AI', 'OCR', 'LLMs'],
       link: '',
     },
     {
@@ -161,11 +162,22 @@ window.PROFILE = {
       link: '',
     },
     {
-      icon: '🌐',
-      title: 'Full Stack Web Platform',
+      icon: '👥',
+      title: 'Employee Management Portal',
       badge: 'NDA',
-      description: 'Production web application with authentication, role-based dashboards and admin panel.',
-      tags: ['Next.js', 'React', 'Node.js', 'PostgreSQL'],
+      description:
+        'HR portal for day-to-day staff management — check-in/check-out and attendance tracking, daily status reports and salary slip generation, with a companion mobile app.',
+      tags: ['Python', 'REST APIs', 'React', 'React Native', 'PostgreSQL'],
+      link: '',
+    },
+    {
+      icon: '📡',
+      title: 'ISP Management Platform',
+      badge: 'NDA',
+      wide: true,
+      description:
+        'Broadband provider platform for managing internet plans, customer service and support tickets, with real-time notifications that alert the support team as soon as a ticket comes in.',
+      tags: ['Python', 'REST APIs', 'React', 'Real-time notifications'],
       link: '',
     },
   ],
@@ -272,7 +284,7 @@ window.PROFILE = {
     },
     {
       q: 'What kind of projects has Rahul Saini built?',
-      a: 'Projects include an AI-powered medical research platform on AWS that gathers data from PubMed, PMC and Embase and answers research questions through a chat interface, a knowledge-based group chat with per-group RAG, email automation that extracts flight details, XML API integrations and LLM agent workflows. Client work is under NDA.',
+      a: 'Projects include an AI-powered medical research platform on AWS that gathers data from PubMed, PMC and Embase and answers research questions through a chat interface, a knowledge-based group chat with per-group RAG, email automation that extracts flight details, an employee management portal with attendance and payroll features, an ISP management platform with real-time support ticketing, a platform combining AI voice calls and OCR document processing, and LLM agent workflows. Client work is under NDA.',
     },
     {
       q: 'Is Rahul Saini available for hire or freelance work?',

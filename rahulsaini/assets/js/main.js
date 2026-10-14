@@ -159,7 +159,7 @@
         const nda = /nda|confidential/i.test(p.badge || '');
         const points = p.points && p.points.length ? `<ul class="card__points">${p.points.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : '';
         const link = p.link ? `<a class="card__link" href="${esc(p.link)}" target="_blank" rel="noopener" aria-label="Open ${esc(p.title)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>` : '';
-        return `<article class="card glow-card ${i === 0 ? 'card--feature' : ''} reveal" id="project-${slug(p.title)}" style="--d:${(i % 3) * 90}ms">
+        return `<article class="card glow-card ${i === 0 ? 'card--feature' : ''} ${p.wide ? 'card--wide' : ''} reveal" id="project-${slug(p.title)}" style="--d:${(i % 3) * 90}ms">
           <div class="card__top">
             <span class="card__icon" aria-hidden="true">${esc(p.icon)}</span>
             <div class="card__top-right">${p.badge ? `<span class="badge ${live ? 'badge--live' : ''} ${nda ? 'badge--nda' : ''}">${esc(p.badge)}</span>` : ''}${link}</div>
