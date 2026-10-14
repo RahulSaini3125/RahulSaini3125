@@ -17,7 +17,8 @@ window.PROFILE = {
   photo: '',            // e.g. 'assets/img/photo.jpg' — leave empty to show initials
   resume: '',           // e.g. 'assets/Rahul-Saini-CV.pdf' — leave empty to hide the button
 
-  available: false,     // true shows the 'Available' badges across the page
+  available: false,     // true shows the 'Available' badges, the Services section and hire-me CTAs
+                        // (also update the 'available' answer in faq below)
   availability: 'Open to new roles & freelance projects',
 
   // Hero headline: "<headlinePrefix> <rotating role> <headlineSuffix>"
@@ -54,17 +55,16 @@ window.PROFILE = {
   about: [
     "I'm a developer who loves turning **real business problems into working software**. I build complete products end-to-end — clean React/Next.js interfaces, fast Python and Node.js APIs, and the databases and cloud infrastructure behind them.",
     'My focus is bringing **AI into real products**: LLM-powered assistants, RAG over company data, agent workflows with LangChain & LangGraph, and automation that saves teams hours every week.',
-    "At Snakescript LLP I've delivered **15+ projects** — from AI research platforms on AWS to automation tools and integrations.",
+    "At Snakescript LLP I've shipped everything from **AI research platforms on AWS** to automation tools and third-party integrations.",
   ],
 
   // Quick facts card next to the About text. value 'auto' = experience computed from careerStart.
   facts: [
     { icon: '💼', label: 'Current role', value: 'Web Developer @ Snakescript LLP' },
     { icon: '⏳', label: 'Experience', value: 'auto' },
-    { icon: '🚀', label: 'Projects delivered', value: '15+' },
     { icon: '🎓', label: 'Education', value: 'BCA · Chandigarh University' },
     { icon: '📍', label: 'Location', value: 'Mohali, Punjab, India' },
-    { icon: '🏢', label: 'Work mode', value: 'On-site / Hybrid · Freelance' },
+    { icon: '🏢', label: 'Work mode', value: 'On-site / Hybrid' },
   ],
 
   highlights: [
@@ -245,6 +245,43 @@ window.PROFILE = {
     { label: 'Just saying hi', subject: 'Hello from your portfolio', text: "Hi Rahul, I came across your portfolio and wanted to say hello!" },
     { label: 'Ask about a project', subject: 'Question about your work', text: 'Hi Rahul, I had a question about one of your projects: ' },
     { label: 'Talk AI', subject: "Let's talk AI", text: "Hi Rahul, I'd love to swap notes on LLM agents and RAG. " },
+  ],
+
+  // ── Search & AI engines (SEO / GEO / AEO) ──────────────────────────────
+  // Used for the canonical URL, structured data (JSON-LD), sitemap.xml and llms.txt.
+  siteUrl: 'https://www.officialrahulsaini.in/',
+  shareImage: 'assets/img/og-image.png',   // 1200×630 preview for LinkedIn / X / WhatsApp
+  company: { name: 'Snakescript LLP', city: 'Mohali' },
+  school: 'Chandigarh University',
+  address: { locality: 'Mohali', region: 'Punjab', country: 'IN' },
+
+  // Shown as a visible FAQ and published as FAQPage structured data. Search and AI answer
+  // engines quote these directly, so keep each answer a complete, factual sentence or two.
+  faq: [
+    {
+      q: 'Who is Rahul Saini?',
+      a: 'Rahul Saini is a Full Stack AI Engineer based in Mohali, Punjab, India. Rahul works at Snakescript LLP, building production web apps, LLM agents and RAG systems with Python, FastAPI, Django, React and Next.js, deployed on AWS and Azure.',
+    },
+    {
+      q: 'What does Rahul Saini specialise in?',
+      a: 'Bringing AI into real products: RAG chatbots over company data, multi-step agent workflows with LangChain and LangGraph, business automation, and the full stack web apps and APIs around them.',
+    },
+    {
+      q: 'What tech stack does Rahul Saini use?',
+      a: 'Python (FastAPI, Django), React, Next.js and TypeScript on the web side; LangChain, LangGraph, embeddings and vector databases for AI; PostgreSQL and Redis for data; and AWS (Lambda, ECS, Step Functions), Azure, Docker and CI/CD for deployment.',
+    },
+    {
+      q: 'What kind of projects has Rahul Saini built?',
+      a: 'Projects include an AI-powered medical research platform on AWS that gathers data from PubMed, PMC and Embase and answers research questions through a chat interface, a knowledge-based group chat with per-group RAG, email automation that extracts flight details, XML API integrations and LLM agent workflows. Client work is under NDA.',
+    },
+    {
+      q: 'Is Rahul Saini available for hire or freelance work?',
+      a: 'Not right now. Rahul is not taking on new roles or projects at the moment, but is happy to talk about AI, web development or past work by email.',
+    },
+    {
+      q: 'How can I contact Rahul Saini?',
+      a: 'Email rahulsaini3125@gmail.com or connect on LinkedIn. Rahul usually replies within 24 hours (India Standard Time).',
+    },
   ],
 
   // Supported icons: github, linkedin, x, email, website. Remove any you don't use.

@@ -1,13 +1,29 @@
 # Rahul Saini — Developer Profile
 
-Static personal profile website (HTML + CSS + vanilla JS, no build step).
+Static personal profile website (HTML + CSS + vanilla JS). The only build step is an optional prerender for SEO.
 
 **Live:** https://www.officialrahulsaini.in/
 
 ## Edit content
 
 All text lives in **`assets/js/data.js`** — profile, availability (`available`), experience, projects,
-skills, services, contact starters and socials. Optional: add a photo (`photo`) and CV (`resume`) under `assets/`.
+skills, services, FAQ, contact starters and socials. Optional: add a photo (`photo`) and CV (`resume`) under `assets/`.
+
+`available: false` hides the Services section and hire-me buttons; flip it to `true` (and update the
+availability answer in `faq`) when you're open to work.
+
+## SEO, GEO & AEO
+
+- **Prerendered HTML** — the Docker build runs `tools/prerender/prerender.mjs`, which executes `data.js` +
+  `main.js` once and writes the result into `index.html`, so search engines, AI crawlers and link previews
+  see the full content without running JavaScript.
+- **Structured data** — `main.js` builds JSON-LD (`Person`, `ProfilePage`, `WebSite`, `FAQPage`) from `data.js`.
+- **FAQ** — visible Q&A section that answer engines can quote; edit `faq` in `data.js`.
+- **`llms.txt` + `sitemap.xml`** — generated at build time from `data.js`. `robots.txt` allows search and AI crawlers.
+- **Social preview** — `assets/img/og-image.png` (1200×630).
+
+After deploying, submit `https://www.officialrahulsaini.in/sitemap.xml` in Google Search Console and Bing
+Webmaster Tools, and check the structured data with Google's Rich Results Test.
 
 ## Run locally
 
@@ -19,6 +35,17 @@ python3 -m http.server 8080
 ## Deploy
 
 - **Docker / Nginx:** `docker compose up -d --build` — runs behind Nginx Proxy Manager (forward to `rahulsaini-portfolio:80`); the container redirects the bare domain to `www`.
-- **Any static host** (GitHub Pages, Netlify, Vercel, Cloudflare Pages): publish this folder as-is.
+- **Any static host** (GitHub Pages, Netlify, Vercel, Cloudflare Pages): publish this folder as-is (the site
+  works without prerendering), or publish an SEO build made in a separate folder — never prerender the
+  source files in place:
 
-When you change CSS/JS, bump the `?v=` number in `index.html` so browsers fetch the new files.
+  ```bash
+  rm -rf build && mkdir build && cp -R index.html 404.html favicon.svg robots.txt assets build/
+  (cd tools/prerender && npm ci) && node tools/prerender/prerender.mjs build   # publish build/
+  ```
+
+When you change `style.css` or `main.js`, bump the `?v=` number in `index.html` so browsers fetch the new
+files. `data.js` is always revalidated, so content edits show up without a bump.
+
+If you edit the inline theme script in `index.html`, the Docker build will fail and print the new sha256
+to paste into the `Content-Security-Policy` in `nginx.conf`.

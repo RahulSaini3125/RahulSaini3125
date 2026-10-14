@@ -4,22 +4,37 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rahul Saini — Full Stack AI Engineer</title>
-  <meta name="description" content="Rahul Saini — Full Stack AI Engineer building web apps, LLM agents and RAG systems with Python, FastAPI, Django, React, Next.js, LangChain, AWS and Azure." />
+  <meta name="description" content="Rahul Saini — Full Stack AI Engineer in Mohali, India. Builds web apps, LLM agents and RAG systems with Python, FastAPI, React, Next.js, LangChain and AWS." />
   <meta name="author" content="Rahul Saini" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
   <meta name="theme-color" content="#07080b" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2" />
   <link rel="canonical" href="https://www.officialrahulsaini.in/" />
-  <meta property="og:url" content="https://www.officialrahulsaini.in/" />
+  <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM-readable profile" />
+  <meta name="keywords" content="Rahul Saini, Full Stack AI Engineer, AI Engineer, Python Developer, FastAPI, Django, React, Next.js, LangChain, LangGraph, RAG, LLM Agents, Mohali, India" />
+
+  <!-- Social previews (LinkedIn, X, WhatsApp, Slack) -->
   <meta property="og:type" content="profile" />
+  <meta property="og:site_name" content="Rahul Saini" />
+  <meta property="og:locale" content="en_IN" />
+  <meta property="og:url" content="https://www.officialrahulsaini.in/" />
   <meta property="og:title" content="Rahul Saini — Full Stack AI Engineer" />
   <meta property="og:description" content="Full Stack AI Engineer — web apps, LLM agents, RAG and scalable APIs." />
-  <meta name="keywords" content="Rahul Saini, Full Stack AI Engineer, AI Engineer, Python Developer, FastAPI, Django, React, Next.js, LangChain, RAG, Freelance Web Developer, Hire Developer" />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image" content="https://www.officialrahulsaini.in/assets/img/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Rahul Saini — Full Stack AI Engineer" />
+  <meta property="profile:first_name" content="Rahul" />
+  <meta property="profile:last_name" content="Saini" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Rahul Saini — Full Stack AI Engineer" />
+  <meta name="twitter:description" content="Full Stack AI Engineer — web apps, LLM agents, RAG and scalable APIs." />
+  <meta name="twitter:image" content="https://www.officialrahulsaini.in/assets/img/og-image.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/style.css?v=17" />
+  <link rel="stylesheet" href="assets/css/style.css?v=18" />
 
   <!-- Apply saved theme before paint to avoid a flash -->
   <script>
@@ -58,7 +73,7 @@
         <a href="#experience">Experience</a>
         <a href="#projects">Work</a>
         <a href="#skills">Skills</a>
-        <a href="#services">Services</a>
+        <a href="#services" data-if="available">Services</a>
         <a href="#contact">Contact</a>
       </nav>
 
@@ -86,18 +101,24 @@
 
           <h1 class="hero__title reveal">
             <span data-bind="headlinePrefix"></span>
-            <span class="rotator" aria-live="polite"><span class="rotator__word" id="rotator"></span><span class="rotator__caret" aria-hidden="true"></span></span>
+            <span class="sr-only" id="rotator-label"></span>
+            <span class="rotator" aria-hidden="true"><span class="rotator__word" id="rotator"></span><span class="rotator__caret"></span></span>
             <span class="hero__suffix" data-bind="headlineSuffix"></span>
           </h1>
 
           <p class="hero__lead reveal" data-bind="intro"></p>
 
           <div class="hero__cta reveal">
-            <a href="#contact" class="btn btn--primary btn--lg magnetic">
+            <a href="#contact" class="btn btn--primary btn--lg magnetic" data-if="available">
               <span>Let's work together</span>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
             </a>
-            <a href="#projects" class="btn btn--ghost btn--lg"><span>See my work</span></a>
+            <a href="#projects" class="btn btn--primary btn--lg magnetic" data-if-not="available">
+              <span>See my work</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+            </a>
+            <a href="#projects" class="btn btn--ghost btn--lg" data-if="available"><span>See my work</span></a>
+            <a href="#contact" class="btn btn--ghost btn--lg" data-if-not="available"><span>Get in touch</span></a>
             <a class="btn btn--ghost btn--lg" data-if="resume" data-href="resume" download><span>Download CV</span></a>
           </div>
 
@@ -212,7 +233,7 @@
     </section>
 
     <!-- SERVICES -->
-    <section class="section" id="services">
+    <section class="section" id="services" data-if="available">
       <div class="container">
         <header class="section__head reveal" data-num="05">
           <span class="eyebrow">For clients</span>
@@ -221,6 +242,17 @@
         </header>
         <div class="services" id="service-list"></div>
         <ol class="process reveal" id="process" aria-label="How we'll work together"></ol>
+      </div>
+    </section>
+
+    <!-- FAQ (also published as FAQPage structured data) -->
+    <section class="section" id="faq">
+      <div class="container">
+        <header class="section__head reveal" data-num="06">
+          <span class="eyebrow">FAQ</span>
+          <h2>Questions, <em>answered.</em></h2>
+        </header>
+        <div class="faq" id="faq-list"></div>
       </div>
     </section>
 
@@ -280,7 +312,7 @@
 
   <noscript><p style="padding:2rem;text-align:center">Please enable JavaScript to view this profile.</p></noscript>
 
-  <script src="assets/js/data.js?v=18" defer></script>
-  <script src="assets/js/main.js?v=21" defer></script>
+  <script src="assets/js/data.js?v=19" defer></script>
+  <script src="assets/js/main.js?v=22" defer></script>
 </body>
 </html>

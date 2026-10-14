@@ -94,7 +94,7 @@
 
   function renderMarquee() {
     const all = (P.skills || []).flatMap((g) => g.items.map((s) => (typeof s === 'string' ? s : s.name)));
-    if (!all.length) { $('.marquee').remove(); return; }
+    if (!all.length) { $('.marquee')?.remove(); return; }
     const row = (items) => {
       const html = items.map((s) => `<span class="marquee__item">${esc(s)}<i>✦</i></span>`).join('');
       return html + html; // duplicated for a seamless loop
@@ -212,6 +212,7 @@
   function renderSkills() {
     const groups = P.skills || [];
     const root = $('#atoms');
+    if (!root) return;
     if (!groups.length) { root.remove(); return; }
 
     // Tools orbit on two rings: a small inner ring and a larger outer one
@@ -282,6 +283,7 @@
   };
 
   function renderServices() {
+    if (!$('#service-list')) return; // section hidden while not available
     $('#service-list').innerHTML = (P.services || [])
       .map((s, i) => {
         const subject = encodeURIComponent(`Project enquiry: ${s.title}`);
@@ -297,10 +299,75 @@
       .join('');
 
     const steps = P.process || [];
-    if (!steps.length) { $('#process').remove(); return; }
+    if (!steps.length) { $('#process')?.remove(); return; }
     $('#process').innerHTML = steps
       .map((p, i) => `<li class="process__step" style="--i:${i}"><span class="process__dot">${i + 1}</span><h4>${esc(p.step)}</h4><p>${esc(p.text)}</p></li>`)
       .join('');
+  }
+
+  /* ---------- FAQ ---------- */
+  function renderFaq() {
+    const list = $('#faq-list');
+    if (!list) return;
+    const faq = P.faq || [];
+    if (!faq.length) { $('#faq')?.remove(); return; }
+    list.innerHTML = faq
+      .map((f, i) => `<details class="faq__item glow-card reveal" style="--d:${(i % 3) * 60}ms"${i === 0 ? ' open' : ''}>
+          <summary><h3>${esc(f.q)}</h3><span class="faq__icon" aria-hidden="true"></span></summary>
+          <p>${esc(f.a)}</p>
+        </details>`)
+      .join('');
+  }
+
+  // Section numbers follow what's actually on the page (Services is hidden while unavailable)
+  function numberSections() {
+    $$('main .section__head[data-num]').forEach((h, i) => (h.dataset.num = String(i + 1).padStart(2, '0')));
+  }
+
+  /* ---------- Structured data (JSON-LD) for search and AI answer engines ---------- */
+  function renderSchema() {
+    const url = P.siteUrl || location.origin + '/';
+    const abs = (path) => (path ? new URL(path, url).href : undefined);
+    const plain = (s) => String(s).replace(/\*\*/g, '');
+    const person = {
+      '@type': 'Person',
+      '@id': `${url}#person`,
+      name: P.name,
+      url,
+      image: abs(P.photo || P.shareImage),
+      jobTitle: P.role,
+      description: P.intro,
+      email: P.email ? `mailto:${P.email}` : undefined,
+      address: P.address ? { '@type': 'PostalAddress', addressLocality: P.address.locality, addressRegion: P.address.region, addressCountry: P.address.country } : undefined,
+      worksFor: P.company ? { '@type': 'Organization', name: P.company.name } : undefined,
+      alumniOf: P.school ? { '@type': 'CollegeOrUniversity', name: P.school } : undefined,
+      knowsAbout: [...new Set((P.skills || []).flatMap((g) => g.items.map((s) => (typeof s === 'string' ? s : s.name))))],
+      sameAs: (P.socials || []).map((s) => s.url),
+    };
+    const graph = [
+      { '@type': 'WebSite', '@id': `${url}#website`, url, name: P.name, inLanguage: 'en', publisher: { '@id': `${url}#person` } },
+      {
+        '@type': 'ProfilePage', '@id': `${url}#profile`, url, name: document.title,
+        description: (P.about || []).map(plain).join(' '),
+        isPartOf: { '@id': `${url}#website` }, mainEntity: { '@id': `${url}#person` },
+      },
+      person,
+    ];
+    if ((P.faq || []).length) {
+      graph.push({
+        '@type': 'FAQPage', '@id': `${url}#faq`, url: `${url}#faq`,
+        mainEntity: P.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+      });
+    }
+    let el = $('#schema');
+    if (!el) {
+      el = document.createElement('script');
+      el.type = 'application/ld+json';
+      el.id = 'schema';
+      document.head.appendChild(el);
+    }
+    // undefined fields drop out; "<" is escaped so data can never close the script tag
+    el.textContent = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');
   }
 
   /* ---------- Rotating headline word ---------- */
@@ -308,6 +375,10 @@
     const el = $('#rotator');
     const words = (P.roles || []).filter(Boolean);
     if (!words.length) return;
+    // The typing effect is hidden from screen readers; they get the full list once instead
+    $('#rotator-label').textContent = words.length > 1
+      ? `${words.slice(0, -1).join(', ')} and ${words[words.length - 1]}`
+      : words[0];
     if (reduceMotion || words.length === 1) { el.textContent = words[0]; return; }
 
     let w = 0, c = 0, deleting = false, timer = 0, visible = true;
@@ -463,12 +534,13 @@
 
   // One clock drives both the footer time and the contact "My time" row
   function setupClock() {
-    if (!P.timezone) { $('.footer__time').remove(); $('#contact-time').remove(); return; }
+    const hide = () => { $('.footer__time')?.remove(); $('#contact-time')?.remove(); };
+    if (!P.timezone) { hide(); return; }
     let timeFmt, hourFmt;
     try {
       timeFmt = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: P.timezone });
       hourFmt = new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hourCycle: 'h23', timeZone: P.timezone });
-    } catch (e) { $('.footer__time').remove(); $('#contact-time').remove(); return; }
+    } catch (e) { hide(); return; }
 
     const footer = $('#clock'), contact = $('#contact-clock'), mood = $('#contact-mood');
     const tick = () => {
@@ -571,6 +643,9 @@
   renderProjects();
   renderSkills();
   renderServices();
+  renderFaq();
+  numberSections();
+  renderSchema();
   setupIdleSections();
   setupRotator();
   setupTheme();

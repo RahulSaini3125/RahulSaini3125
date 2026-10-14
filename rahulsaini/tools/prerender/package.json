@@ -1,0 +1,9 @@
+{
+  "name": "portfolio-prerender",
+  "private": true,
+  "type": "module",
+  "description": "Bakes the JS-rendered content into index.html at Docker build time",
+  "dependencies": {
+    "jsdom": "30.1.2"
+  }
+}
