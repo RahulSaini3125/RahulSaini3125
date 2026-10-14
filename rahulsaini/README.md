@@ -21,6 +21,7 @@ availability answer in `faq`) when you're open to work.
 - **FAQ** — visible Q&A section that answer engines can quote; edit `faq` in `data.js`.
 - **`llms.txt` + `sitemap.xml`** — generated at build time from `data.js`. `robots.txt` allows search and AI crawlers.
 - **Social preview** — `assets/img/og-image.png` (1200×630).
+- **Google Search Console** — verified with `google6d08cbae026a9347.html`; keep that file or the site loses verification.
 
 After deploying, submit `https://www.officialrahulsaini.in/sitemap.xml` in Google Search Console and Bing
 Webmaster Tools, and check the structured data with Google's Rich Results Test.
@@ -40,7 +41,7 @@ python3 -m http.server 8080
   source files in place:
 
   ```bash
-  rm -rf build && mkdir build && cp -R index.html 404.html favicon.svg robots.txt assets build/
+  rm -rf build && mkdir build && cp -R index.html 404.html favicon.svg robots.txt google*.html assets build/
   (cd tools/prerender && npm ci) && node tools/prerender/prerender.mjs build   # publish build/
   ```
 

@@ -7,7 +7,7 @@ COPY tools/prerender/package.json tools/prerender/package-lock.json ./
 RUN npm ci --omit=dev --no-audit --no-fund
 COPY tools/prerender/prerender.mjs ./
 WORKDIR /site
-COPY index.html 404.html favicon.svg robots.txt ./
+COPY index.html 404.html favicon.svg robots.txt google*.html ./
 COPY assets ./assets
 COPY nginx.conf /tools/nginx.conf
 RUN node /tools/prerender.mjs /site /tools/nginx.conf
