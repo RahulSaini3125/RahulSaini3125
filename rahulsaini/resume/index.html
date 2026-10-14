@@ -1,0 +1,19 @@
+<!doctype html>
+<!--
+  Dev shell for /resume/. resume-app.js renders the page from data.js in the browser.
+  The Docker build (tools/prerender) overwrites this file with the fully prerendered page,
+  so search engines get plain HTML. Don't edit the resume here — edit data.js.
+-->
+<html lang="en" data-shell>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resume</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg?v=2" />
+  <script src="../assets/js/data.js" defer></script>
+  <script type="module" src="../assets/js/resume-app.js?v=2"></script>
+</head>
+<body>
+  <noscript><p>Turn on JavaScript, or go back to the <a href="../">portfolio</a>.</p></noscript>
+</body>
+</html>

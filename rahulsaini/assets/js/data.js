@@ -19,6 +19,13 @@ window.PROFILE = {
                         // a path like 'assets/Rahul-Saini-CV.pdf' = download that file, '' = hide the button
   phone: '',            // optional, shown only in the downloadable resume, e.g. '+91 98765 43210'
 
+  // Thank-you card shown after someone downloads the resume (HR, recruiters, clients)
+  resumeThanks: {
+    title: 'Thank you for considering me!',
+    text: "My resume is on its way to your downloads. Hiring for a role or planning a project? I'd love to hear what you have in mind — I usually reply within 24 hours.",
+    button: "Let's talk",
+  },
+
   available: false,     // true shows the 'Available' badges, the Services section and hire-me CTAs
                         // (also update the 'available' answer in faq below)
   availability: 'Open to new roles & freelance projects',

@@ -7,6 +7,11 @@
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
 
+  // Reload / hard refresh always starts at the top (the browser would otherwise restore the old
+  // position mid-page). Links to a section (#projects …) still land on that section.
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if (!location.hash) window.scrollTo({ top: 0, behavior: 'instant' });
+
   // Run at most once per animation frame, using the latest event
   const perFrame = (fn) => {
     let queued = false, last;
@@ -44,6 +49,9 @@
     return `${years}+ yrs`;
   }
 
+  // Must match ResumeBuilder.fileName() in resume.js
+  const resumePdfPath = () => `${String(P.name).trim().replace(/\s+/g, '-')}-Resume.pdf`;
+
   /* ---------- Simple bindings ---------- */
   function bindSimple() {
     $$('[data-bind]').forEach((el) => (el.textContent = P[el.dataset.bind] ?? ''));
@@ -51,8 +59,9 @@
     $$('[data-if-not]').forEach((el) => { if (P[el.dataset.ifNot]) el.remove(); });
     $$('[data-href]').forEach((el) => {
       if (el.dataset.href === 'resume' && P.resume === 'auto') {
-        el.setAttribute('href', '#'); // generated on click — see setupResume()
-        el.removeAttribute('download');
+        // Clicks build the PDF in the browser (setupResume). The href is the same PDF that
+        // tools/prerender writes at build time, so crawlers and no-JS visitors get a real file.
+        el.setAttribute('href', resumePdfPath());
         el.dataset.resume = 'auto';
       } else {
         el.setAttribute('href', P[el.dataset.href]);
@@ -337,6 +346,7 @@
     const url = P.siteUrl || location.origin + '/';
     const abs = (path) => (path ? new URL(path, url).href : undefined);
     const plain = (s) => String(s).replace(/\*\*/g, '');
+    const edu = (P.experience || []).filter((e) => e.type === 'education');
     const person = {
       '@type': 'Person',
       '@id': `${url}#person`,
@@ -349,8 +359,25 @@
       address: P.address ? { '@type': 'PostalAddress', addressLocality: P.address.locality, addressRegion: P.address.region, addressCountry: P.address.country } : undefined,
       worksFor: P.company ? { '@type': 'Organization', name: P.company.name } : undefined,
       alumniOf: P.school ? { '@type': 'CollegeOrUniversity', name: P.school } : undefined,
+      hasCredential: edu.length
+        ? edu.map((e) => ({
+            '@type': 'EducationalOccupationalCredential',
+            name: e.title,
+            credentialCategory: 'degree',
+            recognizedBy: { '@type': 'CollegeOrUniversity', name: e.org },
+            ...(/^\d{4}$/.test(e.end || '') ? { dateCreated: e.end } : {}),
+          }))
+        : undefined,
+      hasOccupation: { '@type': 'Occupation', name: P.role, occupationLocation: P.address ? { '@type': 'City', name: P.address.locality } : undefined },
       knowsAbout: [...new Set((P.skills || []).flatMap((g) => g.items.map((s) => (typeof s === 'string' ? s : s.name))))],
       sameAs: (P.socials || []).map((s) => s.url),
+      // The resume page + PDF that tools/prerender generates at build time
+      subjectOf: P.resume === 'auto'
+        ? [
+            { '@type': 'WebPage', '@id': `${url}resume/`, url: `${url}resume/`, name: `${P.name} - Resume` },
+            { '@type': 'DigitalDocument', url: abs(resumePdfPath()), name: `${P.name} - Resume (PDF)`, encodingFormat: 'application/pdf' },
+          ]
+        : undefined,
     };
     const graph = [
       { '@type': 'WebSite', '@id': `${url}#website`, url, name: P.name, inLanguage: 'en', publisher: { '@id': `${url}#person` } },
@@ -487,7 +514,7 @@
         if (en.isIntersecting) { en.target.classList.add('in'); revealer.unobserve(en.target); }
         else if (en.boundingClientRect.bottom < 0) showNow(en.target);
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    }, { threshold: 0, rootMargin: '0px 0px 10% 0px' }); // start just before entering the screen
     $$('.reveal').forEach((el) => revealer.observe(el));
 
     // On reload the browser restores the scroll position after this runs. Sections above the
@@ -645,18 +672,7 @@
   }
 
   /* ---------- Resume PDF (built in the browser from data.js) ---------- */
-  // jsPDF (~130 kB gzipped), the builder and its fonts are only fetched on the first click.
-  // All are served from this site: the CSP allows scripts and fetches from 'self' only.
-  const loadScript = (src) =>
-    new Promise((ok, fail) => {
-      const s = document.createElement('script');
-      s.src = src;
-      s.onload = ok;
-      s.onerror = () => fail(new Error(`Could not load ${src}`));
-      document.head.appendChild(s);
-    });
-
-  let resumeLibs;
+  // The builder, jsPDF and fonts are only fetched on the first click (see resume-download.js).
   function setupResume() {
     $$('[data-resume="auto"]').forEach((btn) =>
       btn.addEventListener('click', async (e) => {
@@ -665,14 +681,10 @@
         btn.setAttribute('aria-busy', 'true');
         toast('Building resume PDF…');
         try {
-          resumeLibs ||= loadScript('assets/js/vendor/jspdf.umd.min.js?v=4.2.1')
-            .then(() => loadScript('assets/js/resume.js?v=3'))
-            .then(() => window.ResumeBuilder.loadFonts('assets/fonts/'));
-          const fonts = await resumeLibs;
-          window.ResumeBuilder.build(P, fonts).save(window.ResumeBuilder.fileName(P));
-          toast('Resume downloaded ✓');
+          const { downloadResume } = await import('./resume-download.js?v=2'); // resolved from this script's URL
+          await downloadResume(P, btn); // shows the thank-you card when done
+          $('#toast').classList.remove('show');
         } catch (err) {
-          resumeLibs = null; // allow a retry
           console.error(err);
           toast('Could not build the resume — please try again');
         } finally {
@@ -680,6 +692,14 @@
         }
       })
     );
+  }
+
+  /* ---------- Footer signature ---------- */
+  function setupSignature() {
+    const meta = $('#signature-meta');
+    if (!meta) return;
+    const place = P.address ? `${P.address.locality}, India` : '';
+    meta.textContent = ['Signed', place, new Date().getFullYear()].filter(Boolean).join(' · ');
   }
 
   function setupCopy() {
@@ -718,5 +738,6 @@
   setupClock();
   setupCopy();
   setupResume();
+  setupSignature();
   setupComposer();
 })();

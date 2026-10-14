@@ -1,7 +1,9 @@
 /*
  * Prerender: runs data.js + main.js against index.html once (in jsdom) and writes the result
  * back, so search engines, AI crawlers and link previews get the full content without JS.
- * Also generates sitemap.xml and llms.txt from the same profile data.
+ * Also generates sitemap.xml and llms.txt from the same profile data, and — when
+ * PROFILE.resume is 'auto' — the resume as a static PDF (<Name>-Resume.pdf) and an HTML
+ * page (resume/index.html), so the resume itself is indexable.
  *
  *   node tools/prerender/prerender.mjs <site-dir> [nginx.conf]
  *
@@ -11,8 +13,11 @@
  * The browser still runs main.js as usual and re-renders the same content on top.
  */
 import { createHash } from 'node:crypto';
-import { readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { runInThisContext } from 'node:vm';
 import { JSDOM } from 'jsdom';
 
 const site = process.argv[2];
@@ -31,6 +36,7 @@ const { document } = window;
 // so they still play for real visitors.
 window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
 window.IntersectionObserver = class { observe() {} unobserve() {} disconnect() {} };
+window.scrollTo = () => {};
 
 for (const src of ['assets/js/data.js', 'assets/js/main.js']) {
   window.eval(readFileSync(join(site, src), 'utf8'));
@@ -46,6 +52,9 @@ for (const id of ['rotator', 'clock', 'contact-clock', 'contact-mood']) {
 for (const id of ['progress', 'rail-fill']) document.getElementById(id)?.removeAttribute('style');
 document.querySelector('.nav')?.classList.remove('scrolled');
 document.querySelector('noscript')?.remove(); // content is in the HTML now
+
+// The Person node main.js built — reused by the resume page so both pages describe one entity
+const person = JSON.parse(document.getElementById('schema')?.textContent || '{"@graph":[]}')['@graph'].find((n) => n['@type'] === 'Person');
 
 writeFileSync(file, dom.serialize());
 window.close();
@@ -64,15 +73,41 @@ if (nginxConf) {
   }
 }
 
-// ---------- sitemap.xml ----------
 const url = P.siteUrl;
 const today = new Date().toISOString().slice(0, 10);
+
+// ---------- Resume: static PDF + crawlable HTML page ----------
+// The "Download CV" button builds the PDF in the browser; these give search engines and AI
+// crawlers a real URL to index: /<Name>-Resume.pdf and /resume/.
+const resumeOn = P.resume === 'auto';
+let pdfName = '';
+if (resumeOn) {
+  const require = createRequire(import.meta.url);
+  globalThis.jspdf = require(resolve(site, 'assets/js/vendor/jspdf.umd.min.js'));
+  runInThisContext(readFileSync(join(site, 'assets/js/resume.js'), 'utf8'));
+  const RB = globalThis.ResumeBuilder;
+  const fonts = {};
+  for (const f of ['Inter-Regular.ttf', 'Inter-SemiBold.ttf', 'Inter-Italic.ttf', 'SpaceGrotesk-Bold.ttf']) {
+    fonts[f] = readFileSync(join(site, 'assets/fonts', f)).toString('base64');
+  }
+  const pdf = RB.build(P, fonts);
+  pdfName = RB.fileName(P);
+  writeFileSync(join(site, pdfName), Buffer.from(pdf.output('arraybuffer')));
+
+  // Same template the browser uses for the dev shell; replaces resume/index.html with baked HTML
+  const { resumePage } = await import(pathToFileURL(resolve(site, 'assets/js/resume-page.js')).href);
+  mkdirSync(join(site, 'resume'), { recursive: true });
+  writeFileSync(join(site, 'resume', 'index.html'), resumePage(P, person, pdfName));
+}
+
+// ---------- sitemap.xml ----------
+const sitemapUrls = [url, ...(resumeOn ? [`${url}resume/`, `${url}${pdfName}`] : [])];
 writeFileSync(join(site, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${url}</loc>
+${sitemapUrls.map((u) => `  <url>
+    <loc>${u}</loc>
     <lastmod>${today}</lastmod>
-  </url>
+  </url>`).join('\n')}
 </urlset>
 `);
 
@@ -88,10 +123,14 @@ const lines = [
   ...(P.about || []).map(plain).flatMap((p) => [p, '']),
   '## Experience',
   '',
-  ...(P.experience || []).flatMap((e) => [
+  ...(P.experience || []).filter((e) => e.type !== 'education').flatMap((e) => [
     `- **${e.title}**, ${e.org} (${e.start} – ${e.end})`,
     ...(e.points || []).map((p) => `  - ${p}`),
   ]),
+  '',
+  '## Education',
+  '',
+  ...(P.experience || []).filter((e) => e.type === 'education').map((e) => `- **${e.title}**, ${e.org} (${e.start} – ${e.end})`),
   '',
   '## Projects',
   '',
@@ -108,10 +147,11 @@ const lines = [
   '## Links',
   '',
   `- [Website](${url})`,
+  ...(resumeOn ? [`- [Resume](${url}resume/)`, `- [Resume (PDF)](${url}${pdfName})`] : []),
   ...(P.socials || []).map((s) => `- [${s.label}](${s.url})`),
   ...(P.email ? [`- Email: ${P.email}`] : []),
   '',
 ];
 writeFileSync(join(site, 'llms.txt'), lines.join('\n'));
 
-console.log(`prerendered ${file}, sitemap.xml, llms.txt`);
+console.log(`prerendered ${file}, sitemap.xml, llms.txt${resumeOn ? `, ${pdfName}, resume/index.html` : ''}`);
