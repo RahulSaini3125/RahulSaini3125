@@ -313,8 +313,11 @@ window.PROFILE = {
   ],
 
   // Supported icons: github, linkedin, x, email, website. Remove any you don't use.
+  // url: the link visitors click (here, a redirect subdomain).
+  // profile: the real profile URL, published as sameAs so search engines tie the profile to you.
   socials: [
-    { icon: 'github', label: 'GitHub', url: 'https://github.com/RahulSaini3125' },
-    { icon: 'linkedin', label: 'LinkedIn', url: 'https://www.linkedin.com/in/rahul-saini-709934273/' },
+    { icon: 'github', label: 'GitHub', url: 'https://github.officialrahulsaini.in', profile: 'https://github.com/RahulSaini3125' },
+    { icon: 'linkedin', label: 'LinkedIn', url: 'https://linkedin.officialrahulsaini.in', profile: 'https://www.linkedin.com/in/rahul-saini-709934273/' },
+    { icon: 'x', label: 'X', url: 'https://x.officialrahulsaini.in', profile: 'https://x.com/rahulsaini3125' },
   ],
 };
