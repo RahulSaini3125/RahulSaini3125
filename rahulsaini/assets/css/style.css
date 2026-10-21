@@ -111,6 +111,8 @@ body {
 
 img, svg { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
+/* Body copy is justified; hyphenation keeps word spacing even in narrow columns and on phones */
+main p { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
 ul, ol { list-style: none; }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
 strong { color: var(--text); font-weight: 600; }
