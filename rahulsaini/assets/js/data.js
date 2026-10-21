@@ -279,6 +279,28 @@ window.PROFILE = {
   // Used for the canonical URL, structured data (JSON-LD), sitemap.xml and llms.txt.
   siteUrl: 'https://www.officialrahulsaini.in/',
   shareImage: 'assets/img/og-image.png',   // 1200×630 preview for LinkedIn / X / WhatsApp
+
+  // Intro video shown under the hero, also published as VideoObject structured data.
+  // src/poster are the dark-theme cut; `light` is swapped in when the site is in light mode.
+  // Set to '' to hide the section.
+  video: {
+    src: 'assets/video/intro.mp4',
+    poster: 'assets/video/intro-poster.jpg',
+    light: { src: 'assets/video/intro-light.mp4', poster: 'assets/video/intro-light-poster.jpg' },
+    title: 'Rahul Saini in 50 seconds',
+    lede: 'A quick tour, in my own words — the AI agents, RAG chatbots and full stack apps I build, and the stack behind them.',
+    // Shown next to the video; clicking one jumps there. t = seconds into the video.
+    chapters: [
+      { t: 5, label: 'Who I am' },
+      { t: 12, label: 'What I build — agents, RAG chat, web apps' },
+      { t: 22, label: '15+ projects shipped end to end' },
+      { t: 29, label: 'My stack' },
+      { t: 41, label: "Let's build something together" },
+    ],
+    description: 'A 50-second intro to Rahul Saini — the AI agents, RAG chatbots and full stack web apps he builds, and the stack behind them.',
+    duration: 'PT50S',          // ISO 8601
+    uploadDate: '2026-10-21',
+  },
   company: { name: 'Snakescript LLP', city: 'Mohali' },
   school: 'Chandigarh University',
   address: { locality: 'Mohali', region: 'Punjab', country: 'IN' },

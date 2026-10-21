@@ -109,6 +109,137 @@
       .join('');
   }
 
+  // Intro video in a custom player styled like the site. There's a dark and a light cut; the one matching
+  // the site theme is shown and toggling swaps it in place. preload="none" keeps the page light.
+  // No download button, context menu or picture-in-picture, and nginx refuses direct file requests —
+  // that stops casual saving, though nothing in a browser can make a playable video truly un-downloadable.
+  function renderVideo() {
+    const box = $('#showreel');
+    const v = P.video;
+    if (!box || !v) return;
+    const cut = () => (document.documentElement.getAttribute('data-theme') === 'light' && v.light ? v.light : v);
+    const clock = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+    const chapters = v.chapters || [];
+    let total = +(/(\d+)S/.exec(v.duration || '') || [])[1] || 50;
+    const icon = {
+      play: '<path d="M8 5.5v13l11-6.5z"/>',
+      pause: '<path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/>',
+      sound: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="stroke" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>',
+      muted: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="stroke" d="M16 9.5l5 5M21 9.5l-5 5"/>',
+      full: '<path class="stroke" d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/>',
+      exit: '<path class="stroke" d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/>',
+    };
+    const svg = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true">${icon[name]}</svg>`;
+    box.innerHTML = `
+      <video class="showreel__video" preload="none" playsinline disablepictureinpicture disableremoteplayback
+        controlslist="nodownload noplaybackrate noremoteplayback" src="${esc(cut().src)}" poster="${esc(cut().poster)}"
+        width="1920" height="1080" aria-label="${esc(v.title)}"></video>
+      <button class="showreel__play" type="button" aria-label="Play video: ${esc(v.title)}">
+        <span class="showreel__icon">${svg('play')}</span>
+      </button>
+      <div class="player" role="group" aria-label="Video controls">
+        <button class="player__btn" type="button" data-act="play" aria-label="Play">${svg('play')}</button>
+        <span class="player__time"><span data-cur>0:00</span><span class="player__dur"> / ${clock(total)}</span></span>
+        <div class="player__track">
+          <div class="player__rail"><div class="player__fill"></div></div>
+          ${chapters.filter((c) => c.t > 0).map((c) => `<i class="player__mark" style="left:${(c.t / total) * 100}%" title="${esc(c.label)}"></i>`).join('')}
+          <input class="player__seek" type="range" min="0" max="${total}" step="0.1" value="0" aria-label="Seek" />
+        </div>
+        <button class="player__btn" type="button" data-act="mute" aria-label="Mute">${svg('sound')}</button>
+        <button class="player__btn" type="button" data-act="full" aria-label="Full screen">${svg('full')}</button>
+      </div>
+      <figcaption class="sr-only">${esc(v.description)}</figcaption>`;
+    const video = $('video', box);
+    const seek = $('.player__seek', box);
+    const btn = (act) => $(`[data-act="${act}"]`, box);
+    const setIcon = (el, name, label) => { el.innerHTML = svg(name); el.setAttribute('aria-label', label); };
+
+    // Load metadata on demand, then jump (also used by the chapter list)
+    const seekTo = (t, autoplay = true) => {
+      if (video.readyState >= 1) video.currentTime = t;
+      else { video.preload = 'auto'; video.addEventListener('loadedmetadata', () => (video.currentTime = t), { once: true }); }
+      if (autoplay) video.play();
+    };
+    const toggle = () => (video.paused ? video.play() : video.pause());
+
+    box.addEventListener('contextmenu', (e) => e.preventDefault()); // no "Save video as…"
+    $('.showreel__play', box).addEventListener('click', () => video.play());
+    video.addEventListener('click', toggle);
+    btn('play').addEventListener('click', toggle);
+    btn('mute').addEventListener('click', () => (video.muted = !video.muted));
+    btn('full').addEventListener('click', () => {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (box.requestFullscreen) box.requestFullscreen();
+      else if (video.webkitEnterFullscreen) video.webkitEnterFullscreen(); // iOS Safari: video-only fullscreen
+    });
+    seek.addEventListener('input', () => seekTo(+seek.value, false));
+
+    video.addEventListener('play', () => { box.classList.add('is-started', 'is-playing'); setIcon(btn('play'), 'pause', 'Pause'); wake(); });
+    video.addEventListener('pause', () => { box.classList.remove('is-playing'); setIcon(btn('play'), 'play', 'Play'); wake(); });
+    video.addEventListener('volumechange', () => setIcon(btn('mute'), video.muted ? 'muted' : 'sound', video.muted ? 'Unmute' : 'Mute'));
+    video.addEventListener('loadedmetadata', () => { total = video.duration || total; seek.max = total; $('.player__dur', box).textContent = ` / ${clock(total)}`; });
+    document.addEventListener('fullscreenchange', () => {
+      const on = document.fullscreenElement === box;
+      box.classList.toggle('is-fullscreen', on);
+      setIcon(btn('full'), on ? 'exit' : 'full', on ? 'Exit full screen' : 'Full screen');
+    });
+
+    // Controls hide while playing and the pointer is still
+    let idle;
+    const wake = () => {
+      box.classList.remove('is-idle');
+      clearTimeout(idle);
+      if (!video.paused) idle = setTimeout(() => box.classList.add('is-idle'), 2200);
+    };
+    ['pointermove', 'pointerdown', 'focusin'].forEach((ev) => box.addEventListener(ev, wake));
+
+    // Keyboard: space/k play-pause, ←/→ 5s, m mute, f full screen
+    box.addEventListener('keydown', (e) => {
+      if (e.target === seek && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) return; // the slider handles these itself
+      const k = e.key.toLowerCase();
+      if (k === ' ' || k === 'k') { if (e.target.closest('button')) return; e.preventDefault(); toggle(); }
+      else if (k === 'arrowleft' || k === 'arrowright') { e.preventDefault(); seekTo(Math.max(0, Math.min(total, video.currentTime + (k === 'arrowleft' ? -5 : 5))), false); }
+      else if (k === 'm') video.muted = !video.muted;
+      else if (k === 'f') btn('full').click();
+      wake();
+    });
+
+    // Lede + chapter list beside the video; a chapter jumps there and plays
+    const lede = $('#intro-lede');
+    if (lede) lede.textContent = v.lede || '';
+    const list = $('#chapters');
+    const items = [];
+    if (list) {
+      list.innerHTML = chapters
+        .map((c) => `<li><button class="chapter" type="button" data-t="${c.t}"><span class="chapter__time">${clock(c.t)}</span><span>${esc(c.label)}</span></button></li>`)
+        .join('');
+      list.addEventListener('click', (e) => { const b = e.target.closest('.chapter'); if (b) seekTo(+b.dataset.t); });
+      items.push(...$$('.chapter', list));
+    }
+    // Progress bar, clock and the chapter that's playing
+    video.addEventListener('timeupdate', () => {
+      const t = video.currentTime;
+      if (document.activeElement !== seek) seek.value = t;
+      box.style.setProperty('--p', `${(t / total) * 100}%`);
+      $('[data-cur]', box).textContent = clock(t);
+      const i = chapters.findLastIndex((c) => t >= c.t);
+      items.forEach((b, j) => b.classList.toggle('is-active', j === i));
+    });
+    video.addEventListener('ended', () => { box.classList.remove('is-started'); seekTo(0, false); });
+
+    if (!v.light) return;
+    // Theme toggled: switch cuts, keeping the playback position (both cuts share one timeline)
+    new MutationObserver(() => {
+      const { src, poster } = cut();
+      if (video.getAttribute('src') === src) return;
+      const at = video.currentTime, playing = !video.paused;
+      video.poster = poster;
+      if (at > 0) video.preload = 'auto'; // preload="none" would never fetch the metadata we wait for
+      video.src = src;
+      if (at > 0) video.addEventListener('loadedmetadata', () => { video.currentTime = at; if (playing) video.play(); }, { once: true });
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  }
+
   function renderMarquee() {
     const all = (P.skills || []).flatMap((g) => g.items.map((s) => (typeof s === 'string' ? s : s.name)));
     if (!all.length) { $('.marquee')?.remove(); return; }
@@ -388,6 +519,13 @@
       },
       person,
     ];
+    if (P.video) {
+      graph.push({
+        '@type': 'VideoObject', '@id': `${url}#intro`, name: P.video.title, description: P.video.description,
+        thumbnailUrl: abs(P.video.poster), uploadDate: P.video.uploadDate,
+        duration: P.video.duration, inLanguage: 'en', creator: { '@id': `${url}#person` }, about: { '@id': `${url}#person` },
+      });
+    }
     if ((P.faq || []).length) {
       graph.push({
         '@type': 'FAQPage', '@id': `${url}#faq`, url: `${url}#faq`,
@@ -718,6 +856,7 @@
   renderOrbit();
   renderCode();
   renderStats();
+  renderVideo();
   renderMarquee();
   renderAbout();
   renderExperience();

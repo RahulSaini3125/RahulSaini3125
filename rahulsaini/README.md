@@ -13,6 +13,12 @@ Each entry in `socials` has a `url` (the link visitors click, e.g. `https://x.of
 redirects via Nginx Proxy Manager) and a `profile` (the real profile URL, published as `sameAs` in the
 structured data so search engines tie the profile to the site).
 
+The intro video above Contact comes from `video` in `data.js` (`assets/video/intro.mp4` + poster). Keep the
+file web-sized (it's ~10 MB, loaded only when played); set `video: ''` to hide the section. There's a light cut
+(`video.light`) that's shown in light mode, and `video.chapters` lists the jump points beside the player.
+The player has no download button or context menu, and `nginx.conf` returns 403 for the `.mp4` files unless the
+request comes from the site's own pages — this stops casual saving, but isn't DRM.
+
 `available: false` hides the Services section and hire-me buttons; flip it to `true` (and update the
 availability answer in `faq`) when you're open to work.
 
