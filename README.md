@@ -11,7 +11,8 @@
 <br />
 
 [![Website](https://img.shields.io/badge/officialrahulsaini.in-5eead4?style=for-the-badge&logo=googlechrome&logoColor=070a10)](https://www.officialrahulsaini.in/)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-a78bfa?style=for-the-badge&logo=linkedin&logoColor=070a10)](https://www.linkedin.com/in/rahul-saini-709934273/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-a78bfa?style=for-the-badge&logo=linkedin&logoColor=070a10)](https://linkedin.officialrahulsaini.in)
+[![X](https://img.shields.io/badge/X-e2e8f0?style=for-the-badge&logo=x&logoColor=070a10)](https://x.officialrahulsaini.in)
 [![Email](https://img.shields.io/badge/Email-f9a8d4?style=for-the-badge&logo=gmail&logoColor=070a10)](mailto:rahulsaini3125@gmail.com)
 
 </div>
@@ -78,6 +79,6 @@ My focus is bringing **AI into real products**: LLM-powered assistants, RAG over
 
 I'm **not taking on new roles or projects right now**, but I'm always happy to talk AI, web dev or anything I've built.
 
-**→ [officialrahulsaini.in](https://www.officialrahulsaini.in/#contact)** · [LinkedIn](https://www.linkedin.com/in/rahul-saini-709934273/) · [rahulsaini3125@gmail.com](mailto:rahulsaini3125@gmail.com)
+**→ [officialrahulsaini.in](https://www.officialrahulsaini.in/#contact)** · [LinkedIn](https://linkedin.officialrahulsaini.in) · [X](https://x.officialrahulsaini.in) · [rahulsaini3125@gmail.com](mailto:rahulsaini3125@gmail.com)
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:f9a8d4,45:a78bfa,100:5eead4&height=110&section=footer" width="100%" alt="" />

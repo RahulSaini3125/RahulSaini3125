@@ -9,6 +9,10 @@ Static personal profile website (HTML + CSS + vanilla JS). The only build step i
 All text lives in **`assets/js/data.js`** — profile, availability (`available`), experience, projects,
 skills, services, FAQ, contact starters and socials. Optional: add a photo (`photo`) and CV (`resume`) under `assets/`.
 
+Each entry in `socials` has a `url` (the link visitors click, e.g. `https://x.officialrahulsaini.in`, which
+redirects via Nginx Proxy Manager) and a `profile` (the real profile URL, published as `sameAs` in the
+structured data so search engines tie the profile to the site).
+
 `available: false` hides the Services section and hire-me buttons; flip it to `true` (and update the
 availability answer in `faq`) when you're open to work.
 
